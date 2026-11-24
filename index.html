@@ -4,71 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#111827">
-  <meta name="description" content="Hire earnings calculator - Version 1">
-  
+  <meta name="description" content="Hire earnings calculator - Version 2">
   <title>Hire Earnings Calculator</title>
   <style>
     *{box-sizing:border-box}
-    body{
-      margin:0;background:#f3f4f6;color:#111827;
-      font-family:Arial,Helvetica,sans-serif;
-      min-height:100vh;
-    }
+    body{margin:0;background:#f3f4f6;color:#111827;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
     .app{max-width:480px;margin:0 auto;min-height:100vh;background:#fff}
-    header{
-      background:#111827;color:#fff;padding:22px 18px 20px;
-      text-align:center;
-    }
+    header{background:#111827;color:#fff;padding:22px 18px 20px;text-align:center}
     header h1{font-size:23px;margin:0 0 5px}
     header p{margin:0;font-size:13px;opacity:.8}
     main{padding:18px}
     label{display:block;font-weight:700;margin:14px 0 7px}
-    input{
-      width:100%;padding:15px;border:1px solid #d1d5db;border-radius:12px;
-      font-size:20px;outline:none;
-    }
+    input[type=text]{width:100%;padding:15px;border:1px solid #d1d5db;border-radius:12px;font-size:20px;outline:none}
     input:focus{border-color:#111827}
-    .hint{font-size:12px;color:#6b7280;margin-top:6px}
-    button{
-      width:100%;border:0;border-radius:12px;padding:15px;
-      font-size:18px;font-weight:700;cursor:pointer;margin-top:18px;
-      background:#111827;color:#fff;
-    }
-
-    .keypad{
-      display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);
-      width:min(480px,100%);background:#fff;border-top:1px solid #d1d5db;
-      box-shadow:0 -8px 25px rgba(0,0,0,.15);padding:10px;z-index:1000;
-    }
+    .hint{font-size:12px;color:#6b7280;margin-top:6px;line-height:1.45}
+    button{width:100%;border:0;border-radius:12px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:14px;background:#111827;color:#fff}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .keypad{display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(480px,100%);background:#fff;border-top:1px solid #d1d5db;box-shadow:0 -8px 25px rgba(0,0,0,.15);padding:10px;z-index:1000}
     .keypad-title{font-size:13px;color:#6b7280;text-align:center;margin-bottom:7px}
     .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-    .key{
-      margin:0!important;padding:14px!important;background:#f3f4f6!important;
-      color:#111827!important;font-size:21px!important;border:1px solid #d1d5db!important;
-    }
+    .key{margin:0!important;padding:14px!important;background:#f3f4f6!important;color:#111827!important;font-size:21px!important;border:1px solid #d1d5db!important}
     .key.action{background:#111827!important;color:#fff!important}
     .key.close{background:#e5e7eb!important}
-    .result{
-      margin-top:20px;border:1px solid #e5e7eb;border-radius:16px;
-      overflow:hidden;
-    }
-    .row{
-      display:flex;justify-content:space-between;gap:12px;
-      padding:14px 15px;border-bottom:1px solid #e5e7eb;font-size:16px;
-    }
+    .airport-box{margin-top:18px;padding:14px;border:1px solid #d1d5db;border-radius:14px;background:#f9fafb}
+    .airport-box h2{font-size:16px;margin:0 0 5px}
+    .gps-status{font-size:13px;line-height:1.5;margin-top:10px;color:#4b5563}
+    .gps-status.good{color:#166534;font-weight:700}
+    .gps-status.bad{color:#b91c1c}
+    .confirm{display:none;margin-top:12px;padding:12px;border-radius:10px;background:#fff;border:1px solid #d1d5db}
+    .confirm label{display:flex;align-items:flex-start;gap:9px;margin:0;font-size:14px;line-height:1.4}
+    .confirm input{width:20px;height:20px;flex:0 0 auto;margin:0}
+    .result{margin-top:20px;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:14px 15px;border-bottom:1px solid #e5e7eb;font-size:15px}
     .row:last-child{border-bottom:0}
     .row .value{font-weight:700;text-align:right}
     .deduct{color:#b91c1c}
-    .earnings{
-      padding:20px 15px;background:#ecfdf5;
-      display:flex;justify-content:space-between;align-items:center;gap:12px;
-    }
+    .earnings{padding:20px 15px;background:#ecfdf5;display:flex;justify-content:space-between;align-items:center;gap:12px}
     .earnings .label{margin:0;font-size:18px;color:#166534}
     .earnings .amount{font-size:25px;font-weight:800;color:#15803d;text-align:right}
-    .note{
-      margin-top:16px;padding:12px;border-radius:12px;background:#f9fafb;
-      font-size:12px;line-height:1.5;color:#4b5563;
-    }
+    .note{margin-top:16px;padding:12px;border-radius:12px;background:#f9fafb;font-size:12px;line-height:1.5;color:#4b5563}
     .clear{background:#e5e7eb;color:#111827;margin-top:10px}
     .footer{text-align:center;padding:15px;color:#9ca3af;font-size:11px}
   </style>
@@ -77,9 +51,8 @@
 <div class="app">
   <header>
     <h1>🚕 Hire Earnings Calculator</h1>
-    <p>Version 1 • 15% App Usage Charge</p>
+    <p>Version 2 • 15% App Charge • Airport Arrival Check</p>
   </header>
-
   <main>
     <label for="tripFare">Trip Fare (LKR)</label>
     <input id="tripFare" type="text" readonly onclick="openKeypad('tripFare')" placeholder="e.g. 1969.82">
@@ -89,142 +62,164 @@
     <input id="passengerDeductible" type="text" readonly onclick="openKeypad('passengerDeductible')" value="0">
     <div class="hint">Optional. It is added to Gross Total and then deducted again, as shown in the hire details.</div>
 
-    <button onclick="calculate()">CALCULATE EARNINGS</button>
-    <button class="clear" onclick="clearAll()">CLEAR</button>
+    <section class="airport-box">
+      <h2>✈️ Airport Arrival Hire Check</h2>
+      <div class="hint">First check that your phone is at Bandaranaike Airport. Allow location access when your browser asks.</div>
+      <button type="button" id="gpsButton" onclick="checkAirportGPS()">CHECK AIRPORT LOCATION</button>
+      <div id="gpsStatus" class="gps-status" aria-live="polite">Location has not been checked yet.</div>
+      <div id="arrivalConfirm" class="confirm">
+        <label>
+          <input type="checkbox" id="arrivalPickup" onchange="updateAirportSelection()">
+          <span><b>This hire pickup is from the Airport Arrivals area.</b><br>Tick only for a hire received from inside Airport Arrivals.</span>
+        </label>
+      </div>
+      <div class="hint">The Rs. 722 Airport Charge is deducted only when GPS confirms you are near the airport AND you confirm this hire pickup is from Airport Arrivals.</div>
+    </section>
+
+    <button type="button" onclick="calculate()">CALCULATE EARNINGS</button>
+    <button type="button" class="clear" onclick="clearAll()">CLEAR</button>
 
     <section id="result" class="result" style="display:none">
-      <div class="row">
-        <span>Trip Fare</span>
-        <span class="value" id="tripFareOut"></span>
-      </div>
-      <div class="row">
-        <span>Passenger Deductible</span>
-        <span class="value" id="passengerOut"></span>
-      </div>
-      <div class="row">
-        <span>Gross Total</span>
-        <span class="value" id="grossOut"></span>
-      </div>
-      <div class="row">
-        <span>Passenger Deductible</span>
-        <span class="value deduct" id="passengerDeductOut"></span>
-      </div>
-      <div class="row">
-        <span>App Usage Charge (15%)</span>
-        <span class="value deduct" id="appChargeOut"></span>
-      </div>
-      <div class="row">
-        <span>Deductions</span>
-        <span class="value deduct" id="deductionsOut"></span>
-      </div>
-      <div class="earnings">
-        <span class="label">YOUR EARNINGS</span>
-        <span class="amount" id="earningsOut"></span>
-      </div>
+      <div class="row"><span>Trip Fare</span><span class="value" id="tripFareOut"></span></div>
+      <div class="row"><span>Passenger Deductible</span><span class="value" id="passengerOut"></span></div>
+      <div class="row"><span>Gross Total</span><span class="value" id="grossOut"></span></div>
+      <div class="row"><span>Passenger Deductible</span><span class="value deduct" id="passengerDeductOut"></span></div>
+      <div class="row"><span>App Usage Charge (15%)</span><span class="value deduct" id="appChargeOut"></span></div>
+      <div class="row" id="airportChargeRow" style="display:none"><span>Airport Arrival Charge</span><span class="value deduct" id="airportChargeOut"></span></div>
+      <div class="row"><span>Total Deductions</span><span class="value deduct" id="deductionsOut"></span></div>
+      <div class="earnings"><span class="label">YOUR EARNINGS</span><span class="amount" id="earningsOut"></span></div>
     </section>
 
     <div class="note">
-      <b>Calculation:</b> App Usage Charge = 15% of Trip Fare.
-      Your Earnings = Trip Fare − App Usage Charge.
-      Passenger Deductible is shown separately and cancels from the Gross Total, matching the provided hire example.
+      <b>Calculation:</b> App Usage Charge = 15% of Trip Fare. Airport Arrival Charge = LKR 722 only when the airport GPS check passes and Airport Arrivals pickup is confirmed. Your Earnings = Gross Total − all deductions.
     </div>
 
     <div id="keypad" class="keypad">
       <div class="keypad-title">Enter amount</div>
       <div class="keys">
-        <button class="key" onclick="keyPress('1')">1</button>
-        <button class="key" onclick="keyPress('2')">2</button>
-        <button class="key" onclick="keyPress('3')">3</button>
-        <button class="key" onclick="keyPress('4')">4</button>
-        <button class="key" onclick="keyPress('5')">5</button>
-        <button class="key" onclick="keyPress('6')">6</button>
-        <button class="key" onclick="keyPress('7')">7</button>
-        <button class="key" onclick="keyPress('8')">8</button>
-        <button class="key" onclick="keyPress('9')">9</button>
-        <button class="key" onclick="keyPress('.')">.</button>
-        <button class="key" onclick="keyPress('0')">0</button>
-        <button class="key" onclick="keyBackspace()">⌫</button>
-        <button class="key close" onclick="closeKeypad()">DONE</button>
-        <button class="key action" onclick="calculate();closeKeypad()">CALCULATE</button>
-        <button class="key close" onclick="keyClear()">CLEAR</button>
+        <button class="key" onclick="keyPress('1')">1</button><button class="key" onclick="keyPress('2')">2</button><button class="key" onclick="keyPress('3')">3</button>
+        <button class="key" onclick="keyPress('4')">4</button><button class="key" onclick="keyPress('5')">5</button><button class="key" onclick="keyPress('6')">6</button>
+        <button class="key" onclick="keyPress('7')">7</button><button class="key" onclick="keyPress('8')">8</button><button class="key" onclick="keyPress('9')">9</button>
+        <button class="key" onclick="keyPress('.')">.</button><button class="key" onclick="keyPress('0')">0</button><button class="key" onclick="keyBackspace()">⌫</button>
+        <button class="key close" onclick="closeKeypad()">DONE</button><button class="key action" onclick="calculate();closeKeypad()">CALCULATE</button><button class="key close" onclick="keyClear()">CLEAR</button>
       </div>
     </div>
   </main>
-
-  <div class="footer">Hire Earnings Calculator • Version 1</div>
+  <div class="footer">Hire Earnings Calculator • Version 2</div>
 </div>
 
 <script>
-function money(n){
-  return "LKR " + Number(n).toLocaleString("en-LK", {
-    minimumFractionDigits:2, maximumFractionDigits:2
-  });
-}
+const AIRPORT_LAT = 7.174329;
+const AIRPORT_LON = 79.887978;
+const AIRPORT_RADIUS_METERS = 600;
+const MAX_GPS_ACCURACY_METERS = 150;
+const AIRPORT_CHARGE = 722;
+let airportGpsPassed = false;
 
+function money(n){
+  return "LKR " + Number(n).toLocaleString("en-LK", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function distanceMeters(lat1, lon1, lat2, lon2){
+  const toRad = d => d * Math.PI / 180;
+  const R = 6371000;
+  const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function checkAirportGPS(){
+  const status = document.getElementById("gpsStatus");
+  const button = document.getElementById("gpsButton");
+  const confirmBox = document.getElementById("arrivalConfirm");
+  const checkbox = document.getElementById("arrivalPickup");
+  airportGpsPassed = false;
+  checkbox.checked = false;
+  confirmBox.style.display = "none";
+  status.className = "gps-status";
+  status.textContent = "Checking your phone location…";
+  button.disabled = true;
+
+  if(!("geolocation" in navigator)){
+    status.className = "gps-status bad";
+    status.textContent = "This browser does not support GPS location. Airport charge will not be applied.";
+    button.disabled = false;
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(position => {
+    button.disabled = false;
+    const accuracy = position.coords.accuracy;
+    if(accuracy > MAX_GPS_ACCURACY_METERS){
+      status.className = "gps-status bad";
+      status.textContent = "GPS accuracy is too low (" + Math.round(accuracy) + " m). Please move to a clearer area and check again. Airport charge is NOT enabled.";
+      return;
+    }
+    const distance = distanceMeters(position.coords.latitude, position.coords.longitude, AIRPORT_LAT, AIRPORT_LON);
+    if(distance <= AIRPORT_RADIUS_METERS){
+      airportGpsPassed = true;
+      status.className = "gps-status good";
+      status.textContent = "✓ GPS confirms you are within the Airport Arrival check area (about " + Math.round(distance) + " m from the reference point). Now confirm the pickup below.";
+      confirmBox.style.display = "block";
+    } else {
+      status.className = "gps-status bad";
+      status.textContent = "You appear to be outside the Airport Arrival check area (about " + Math.round(distance) + " m away). Airport charge is NOT enabled.";
+    }
+  }, error => {
+    button.disabled = false;
+    status.className = "gps-status bad";
+    let message = "Could not get your location. Airport charge is NOT enabled.";
+    if(error.code === 1) message = "Location permission was denied. Allow location access in your browser settings and try again.";
+    if(error.code === 2) message = "Your location is unavailable. Turn on phone Location/GPS and try again.";
+    if(error.code === 3) message = "Location check timed out. Please try again.";
+    status.textContent = message;
+  }, {enableHighAccuracy:true, timeout:20000, maximumAge:0});
+}
+function updateAirportSelection(){
+  if(!airportGpsPassed) document.getElementById("arrivalPickup").checked = false;
+}
 function calculate(){
   const tripFare = parseFloat(document.getElementById("tripFare").value.replace(/,/g, "").trim());
   const passenger = parseFloat(document.getElementById("passengerDeductible").value.replace(/,/g, "").trim()) || 0;
-
-  if (!Number.isFinite(tripFare) || tripFare < 0){
-    alert("Please enter the Trip Fare.");
-    return;
-  }
-
+  if(!Number.isFinite(tripFare) || tripFare < 0){alert("Please enter the Trip Fare.");return;}
+  const airportApplied = airportGpsPassed && document.getElementById("arrivalPickup").checked;
+  const airportCharge = airportApplied ? AIRPORT_CHARGE : 0;
   const appCharge = Math.round(tripFare * 0.15 * 100) / 100;
   const gross = Math.round((tripFare + passenger) * 100) / 100;
-  const deductions = Math.round((passenger + appCharge) * 100) / 100;
+  const deductions = Math.round((passenger + appCharge + airportCharge) * 100) / 100;
   const earnings = Math.round((gross - deductions) * 100) / 100;
-
   document.getElementById("tripFareOut").textContent = money(tripFare);
   document.getElementById("passengerOut").textContent = money(passenger);
   document.getElementById("grossOut").textContent = money(gross);
   document.getElementById("passengerDeductOut").textContent = "− " + money(passenger);
   document.getElementById("appChargeOut").textContent = "− " + money(appCharge);
+  document.getElementById("airportChargeOut").textContent = "− " + money(airportCharge);
+  document.getElementById("airportChargeRow").style.display = airportApplied ? "flex" : "none";
   document.getElementById("deductionsOut").textContent = "− " + money(deductions);
   document.getElementById("earningsOut").textContent = money(earnings);
   document.getElementById("result").style.display = "block";
 }
-
 function clearAll(){
   document.getElementById("tripFare").value = "";
   document.getElementById("passengerDeductible").value = "0";
   document.getElementById("result").style.display = "none";
+  document.getElementById("airportChargeRow").style.display = "none";
+  document.getElementById("arrivalPickup").checked = false;
+  document.getElementById("arrivalConfirm").style.display = "none";
+  document.getElementById("gpsStatus").className = "gps-status";
+  document.getElementById("gpsStatus").textContent = "Location has not been checked yet.";
+  airportGpsPassed = false;
 }
-
-
 let activeInput = null;
-
-function openKeypad(id){
-  activeInput = document.getElementById(id);
-  document.getElementById("keypad").style.display = "block";
-}
-
-function closeKeypad(){
-  document.getElementById("keypad").style.display = "none";
-  activeInput = null;
-}
-
+function openKeypad(id){activeInput = document.getElementById(id);document.getElementById("keypad").style.display = "block";}
+function closeKeypad(){document.getElementById("keypad").style.display = "none";activeInput = null;}
 function keyPress(k){
-  if(!activeInput) return;
-  let v = activeInput.value || "";
-  if(k === "." && v.includes(".")) return;
-  if(v === "0" && k !== ".") v = "";
-  activeInput.value = v + k;
+  if(!activeInput)return;
+  let v=activeInput.value||"";
+  if(k==="."&&v.includes("."))return;
+  if(v==="0"&&k!==".")v="";
+  activeInput.value=v+k;
 }
-
-function keyBackspace(){
-  if(!activeInput) return;
-  activeInput.value = (activeInput.value || "").slice(0,-1);
-}
-
-function keyClear(){
-  if(!activeInput) return;
-  activeInput.value = "";
-}
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
-}
+function keyBackspace(){if(activeInput)activeInput.value=(activeInput.value||"").slice(0,-1);}
+function keyClear(){if(activeInput)activeInput.value="";}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));}
 </script>
 </body>
 </html>
