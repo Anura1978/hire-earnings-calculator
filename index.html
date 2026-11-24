@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Hire earnings calculator - Version 1">
+  
+  <title>Hire Earnings Calculator</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:#f3f4f6;color:#111827;
+      font-family:Arial,Helvetica,sans-serif;
+      min-height:100vh;
+    }
+    .app{max-width:480px;margin:0 auto;min-height:100vh;background:#fff}
+    header{
+      background:#111827;color:#fff;padding:22px 18px 20px;
+      text-align:center;
+    }
+    header h1{font-size:23px;margin:0 0 5px}
+    header p{margin:0;font-size:13px;opacity:.8}
+    main{padding:18px}
+    label{display:block;font-weight:700;margin:14px 0 7px}
+    input{
+      width:100%;padding:15px;border:1px solid #d1d5db;border-radius:12px;
+      font-size:20px;outline:none;
+    }
+    input:focus{border-color:#111827}
+    .hint{font-size:12px;color:#6b7280;margin-top:6px}
+    button{
+      width:100%;border:0;border-radius:12px;padding:15px;
+      font-size:18px;font-weight:700;cursor:pointer;margin-top:18px;
+      background:#111827;color:#fff;
+    }
+
+    .keypad{
+      display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);
+      width:min(480px,100%);background:#fff;border-top:1px solid #d1d5db;
+      box-shadow:0 -8px 25px rgba(0,0,0,.15);padding:10px;z-index:1000;
+    }
+    .keypad-title{font-size:13px;color:#6b7280;text-align:center;margin-bottom:7px}
+    .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .key{
+      margin:0!important;padding:14px!important;background:#f3f4f6!important;
+      color:#111827!important;font-size:21px!important;border:1px solid #d1d5db!important;
+    }
+    .key.action{background:#111827!important;color:#fff!important}
+    .key.close{background:#e5e7eb!important}
+    .result{
+      margin-top:20px;border:1px solid #e5e7eb;border-radius:16px;
+      overflow:hidden;
+    }
+    .row{
+      display:flex;justify-content:space-between;gap:12px;
+      padding:14px 15px;border-bottom:1px solid #e5e7eb;font-size:16px;
+    }
+    .row:last-child{border-bottom:0}
+    .row .value{font-weight:700;text-align:right}
+    .deduct{color:#b91c1c}
+    .earnings{
+      padding:20px 15px;background:#ecfdf5;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .earnings .label{margin:0;font-size:18px;color:#166534}
+    .earnings .amount{font-size:25px;font-weight:800;color:#15803d;text-align:right}
+    .note{
+      margin-top:16px;padding:12px;border-radius:12px;background:#f9fafb;
+      font-size:12px;line-height:1.5;color:#4b5563;
+    }
+    .clear{background:#e5e7eb;color:#111827;margin-top:10px}
+    .footer{text-align:center;padding:15px;color:#9ca3af;font-size:11px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🚕 Hire Earnings Calculator</h1>
+    <p>Version 1 • 15% App Usage Charge</p>
+  </header>
+
+  <main>
+    <label for="tripFare">Trip Fare (LKR)</label>
+    <input id="tripFare" type="text" readonly onclick="openKeypad('tripFare')" placeholder="e.g. 1969.82">
+    <div class="hint">Enter the Trip Fare shown in the hire details.</div>
+
+    <label for="passengerDeductible">Passenger Deductible (LKR)</label>
+    <input id="passengerDeductible" type="text" readonly onclick="openKeypad('passengerDeductible')" value="0">
+    <div class="hint">Optional. It is added to Gross Total and then deducted again, as shown in the hire details.</div>
+
+    <button onclick="calculate()">CALCULATE EARNINGS</button>
+    <button class="clear" onclick="clearAll()">CLEAR</button>
+
+    <section id="result" class="result" style="display:none">
+      <div class="row">
+        <span>Trip Fare</span>
+        <span class="value" id="tripFareOut"></span>
+      </div>
+      <div class="row">
+        <span>Passenger Deductible</span>
+        <span class="value" id="passengerOut"></span>
+      </div>
+      <div class="row">
+        <span>Gross Total</span>
+        <span class="value" id="grossOut"></span>
+      </div>
+      <div class="row">
+        <span>Passenger Deductible</span>
+        <span class="value deduct" id="passengerDeductOut"></span>
+      </div>
+      <div class="row">
+        <span>App Usage Charge (15%)</span>
+        <span class="value deduct" id="appChargeOut"></span>
+      </div>
+      <div class="row">
+        <span>Deductions</span>
+        <span class="value deduct" id="deductionsOut"></span>
+      </div>
+      <div class="earnings">
+        <span class="label">YOUR EARNINGS</span>
+        <span class="amount" id="earningsOut"></span>
+      </div>
+    </section>
+
+    <div class="note">
+      <b>Calculation:</b> App Usage Charge = 15% of Trip Fare.
+      Your Earnings = Trip Fare − App Usage Charge.
+      Passenger Deductible is shown separately and cancels from the Gross Total, matching the provided hire example.
+    </div>
+
+    <div id="keypad" class="keypad">
+      <div class="keypad-title">Enter amount</div>
+      <div class="keys">
+        <button class="key" onclick="keyPress('1')">1</button>
+        <button class="key" onclick="keyPress('2')">2</button>
+        <button class="key" onclick="keyPress('3')">3</button>
+        <button class="key" onclick="keyPress('4')">4</button>
+        <button class="key" onclick="keyPress('5')">5</button>
+        <button class="key" onclick="keyPress('6')">6</button>
+        <button class="key" onclick="keyPress('7')">7</button>
+        <button class="key" onclick="keyPress('8')">8</button>
+        <button class="key" onclick="keyPress('9')">9</button>
+        <button class="key" onclick="keyPress('.')">.</button>
+        <button class="key" onclick="keyPress('0')">0</button>
+        <button class="key" onclick="keyBackspace()">⌫</button>
+        <button class="key close" onclick="closeKeypad()">DONE</button>
+        <button class="key action" onclick="calculate();closeKeypad()">CALCULATE</button>
+        <button class="key close" onclick="keyClear()">CLEAR</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer">Hire Earnings Calculator • Version 1</div>
+</div>
+
+<script>
+function money(n){
+  return "LKR " + Number(n).toLocaleString("en-LK", {
+    minimumFractionDigits:2, maximumFractionDigits:2
+  });
+}
+
+function calculate(){
+  const tripFare = parseFloat(document.getElementById("tripFare").value.replace(/,/g, "").trim());
+  const passenger = parseFloat(document.getElementById("passengerDeductible").value.replace(/,/g, "").trim()) || 0;
+
+  if (!Number.isFinite(tripFare) || tripFare < 0){
+    alert("Please enter the Trip Fare.");
+    return;
+  }
+
+  const appCharge = Math.round(tripFare * 0.15 * 100) / 100;
+  const gross = Math.round((tripFare + passenger) * 100) / 100;
+  const deductions = Math.round((passenger + appCharge) * 100) / 100;
+  const earnings = Math.round((gross - deductions) * 100) / 100;
+
+  document.getElementById("tripFareOut").textContent = money(tripFare);
+  document.getElementById("passengerOut").textContent = money(passenger);
+  document.getElementById("grossOut").textContent = money(gross);
+  document.getElementById("passengerDeductOut").textContent = "− " + money(passenger);
+  document.getElementById("appChargeOut").textContent = "− " + money(appCharge);
+  document.getElementById("deductionsOut").textContent = "− " + money(deductions);
+  document.getElementById("earningsOut").textContent = money(earnings);
+  document.getElementById("result").style.display = "block";
+}
+
+function clearAll(){
+  document.getElementById("tripFare").value = "";
+  document.getElementById("passengerDeductible").value = "0";
+  document.getElementById("result").style.display = "none";
+}
+
+
+let activeInput = null;
+
+function openKeypad(id){
+  activeInput = document.getElementById(id);
+  document.getElementById("keypad").style.display = "block";
+}
+
+function closeKeypad(){
+  document.getElementById("keypad").style.display = "none";
+  activeInput = null;
+}
+
+function keyPress(k){
+  if(!activeInput) return;
+  let v = activeInput.value || "";
+  if(k === "." && v.includes(".")) return;
+  if(v === "0" && k !== ".") v = "";
+  activeInput.value = v + k;
+}
+
+function keyBackspace(){
+  if(!activeInput) return;
+  activeInput.value = (activeInput.value || "").slice(0,-1);
+}
+
+function keyClear(){
+  if(!activeInput) return;
+  activeInput.value = "";
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
+}
+</script>
+</body>
+</html>
